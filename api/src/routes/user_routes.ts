@@ -15,7 +15,7 @@ export async function UserRoutes(app: FastifyInstance) {
         });
     })
 
-    app.get("/login", async (req, reply) => {
+    app.post("/login", async (req, reply) => {
         const bodySchema = z.object({
             nome_usuario: z.string(),
             senha: z.string(),
@@ -33,7 +33,7 @@ export async function UserRoutes(app: FastifyInstance) {
             reply
                 .code(404)
                 .send({
-                    'resultado': 'usuario não encontrado',
+                    'resultado': 'usuario não encontrado'
                 })
         }
         else if (usuario?.senha == senha){
@@ -44,9 +44,26 @@ export async function UserRoutes(app: FastifyInstance) {
             reply
                 .code(400)
                 .send({
-                    'resultado': 'um erro ocorreu',
-
+                    'resultado': 'um erro ocorreu'
                 })
         }
+    })
+
+    app.post("/criar-usuario", async (req) => {
+        const bodySchema = z.object({
+            nome_usuario: z.string(),
+            senha: z.string(),
+        })
+
+        const { nome_usuario, senha } = bodySchema.parse(req.body);
+
+        const usuario = await prisma.usuario.create({
+            data: {
+                nome_usuario,
+                senha
+            }
+        })
+
+        return usuario;
     })
 }
