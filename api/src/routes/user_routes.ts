@@ -52,13 +52,28 @@ export async function UserRoutes(app: FastifyInstance) {
         }
     })
 
-    app.post("/criar-usuario", async (req) => {
+    app.post("/criar-usuario", async (req, reply) => {
         const bodySchema = z.object({
             nome_usuario: z.string(),
             senha: z.string(),
         })
 
         const { nome_usuario, senha } = bodySchema.parse(req.body);
+
+        const usuario_existente = await prisma.usuario.findFirst({
+            where: {
+                nome_usuario: nome_usuario
+            },
+          })
+        
+        if (usuario_existente){
+            reply
+                .code(400)
+                .send({
+                    'resultado': 'usuario já existente'
+                })
+        }
+
 
         const usuario = await prisma.usuario.create({
             data: {
@@ -67,6 +82,9 @@ export async function UserRoutes(app: FastifyInstance) {
             }
         })
 
-        return usuario;
+        return {
+            'id': usuario.id,
+            'nome_usuario': usuario.nome_usuario
+        };
     })
 }
