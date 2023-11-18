@@ -39,7 +39,10 @@ export async function UserRoutes(app: FastifyInstance) {
         else if (usuario?.senha == senha){
             reply
                 .code(200)
-                .send(usuario)
+                .send({
+                    'id': usuario.id,
+                    'nome_usuario': usuario.nome_usuario
+                })
         } else {
             reply
                 .code(400)
