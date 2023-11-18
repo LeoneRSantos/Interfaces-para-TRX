@@ -1,9 +1,11 @@
 import fastify from "fastify";
 import { TrxRoutes } from "./routes/trx_routes";
+import { UserRoutes } from "./routes/user_routes";
 
 const app = fastify();
 
-app.register(TrxRoutes)
+app.register(UserRoutes)
+// app.register(TrxRoutes)
 
 app.listen({
     port: 3333,
