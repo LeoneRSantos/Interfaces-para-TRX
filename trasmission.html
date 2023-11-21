@@ -5,6 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="tramission.css">
     <title>Transmission</title>
+    <style>
+        body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.music-visualization {
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
+    height: 150px;
+}
+
+.bar {
+    width: 40px;
+    background-color: #3498db;
+    animation: barAnimation 1.4s infinite alternate;
+}
+
+@keyframes barAnimation {
+    from {
+        height: 0;
+    }
+    to {
+        height: 100%;
+    }
+}
+
+    </style>
 </head>
 <body>
     <div class="music-visualization">
