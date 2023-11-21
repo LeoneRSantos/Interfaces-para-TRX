@@ -1,20 +1,23 @@
-const { exec } = require("child_process");
+var express = require("express");
+app = express();
+const log = require("./log.js");
 
-function execCommandInTerminal(){
-    var command = "tx -b 256 -p 3400 -h 127.0.0.1 -d hw:1,0"
 
-    exec(command, (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            return;
-        }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-        }
-        console.log(`${stdout}`);
-    });
-    
-}
+app.get("/", function (req, res) {
+    res.sendFile(__dirname + "/login.html")
+})
 
-execCommandInTerminal()
+app.get("/home", function (req, res) {
+    res.sendFile(__dirname + "/home.html")
+})
+
+
+app.get("/run-log/:parametro", (req, res) => {
+    const parametro = req.params.parametro;
+    log(parametro);
+    res.send(`Log executado com sucesso para o parâmetro: ${parametro}`);
+  });
+
+  
+
+app.listen(3000);
