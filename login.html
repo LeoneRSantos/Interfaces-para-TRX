@@ -79,44 +79,57 @@
 
 <body>
   <div class="container">
-    <h2>Login Form</h2>
-    <form action="POST" method="post">
-      <div class="container">
-        <label for="nome"><b>Username</b></label>
-        <input type="text" id="name" placeholder="Enter Username" name="nome" required>
-        <label for="senha"><b>Password</b></label>
-        <input type="password" id="senha" placeholder="Enter Password" name="senha" required>
-        <button type="submit" id="button" onclick="login()">Login</button>
-      </div>
-    </form>
+    <h2>Login</h2>
+      <form id="loginForm">
+        <div class="container">
+          <label for="username">Nome de Usuário:</label>
+          <input type="text" id="username" name="nome_usuario" required>
+  
+          <label for="password">Senha:</label>
+          <input type="password" id="password" name="senha" required>
+  
+          <button type="button" onclick="login()">Login</button>
+        </div>
+      </form>
   </div>
 
-<script>
-  console.log("oi");
-  function login() {
-    console.log("oi");
-    var nome = document.getElementById("name").value;
-    var senha = document.getElementById("senha").value;
+    <script>
+      const baseUrl = 'http://localhost:3333'; // Altere para o endereço da sua API
+  
+      async function login() {
+          const username = document.getElementById('username').value;
+          const password = document.getElementById('password').value;
+  
+          try {
+              const response = await fetch(baseUrl + '/login', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ nome_usuario: username, senha: password }),
+              });
+  
+              const data = await response.json();
+              console.log(data); // Manipule a resposta conforme necessário
 
-    fetch("http://localhost:3333/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nome_usuario: nome,
-        senha: senha,
-      }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-      })
-      .catch(error => {
-        console.error("Erro ao fazer login:", error);
-      });
-  }
-</script>
+              if (response.status === 200) {
+                  console.log('Login bem-sucedido:', data);
+                  window.location.href = "http://localhost:3000/home";
+
+              } else if (response.status === 404) {
+                  console.error('Credenciais inválidas');
+                  alert("Usuário não encontrado! Tente novamente");
+
+              } else if (response.status === 400) {
+                  console.error('Credenciais inválidas');
+                  alert("Senha incorreta! Tente novamente");
+                  
+              }
+          } catch (error) {
+              console.error('Erro ao fazer login:', error);
+          }
+      }
+  </script>
 
 </body>
 </html>
