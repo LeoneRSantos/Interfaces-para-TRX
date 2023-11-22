@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="global.css">
+
+    <script src="log.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-y: hidden;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container{
+            width: 100%;
+            
+            padding: 30%;
+        }
+        form {
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 60px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            font-size: 18px;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        select option {
+            font-size: 18px;
+        }
+
+        button {
+            width: 100%;
+            background-color: #2b52e2;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #9f95ff;
+        }
+    </style>
+    <title>Home</title>
+
+</head>
+
+<body>
+    <div class="container">
+        <form action="post">
+            <div class="item">
+                <label for="acao">Escolha uma ação:</label>
+                <select name="acao" id="acao" onchange="habilitarCampos()">
+                    <option value="#">Selecione</option>
+                    <option value="0">Ouvir</option>
+                    <option value="1">Transmitir</option>
+                </select>
+            </div>
+            <div class="item">
+
+                <label for="port">Porta:</label>
+                <input type="text" name="port" id="port" placeholder="Digite a porta">
+            </div>
+            <div class="item">
+
+                <label for="host">Host:</label>
+                <input type="text" name="host" id="host" placeholder="Digite o host">
+            </div>
+            <div class="item">
+
+                <label for="placa">Placa de áudio:</label>
+                <input type="text" name="placa" id="placa" placeholder="Digite a placa de áudio">
+            </div>
+            <div class="item">
+                <label for="latencia">Latência:</label>
+                <input type="text" name="latencia" id="latencia" placeholder="Digite a latência">
+
+            </div>
+
+            <button type="button" id="button" onclick="capturarInputs()">Enviar</button>
+        </form>
+
+    </div>
+</body>
+<script>
+    function habilitarCampos() {
+            var acao = document.getElementById("acao").value;
+
+            // Obtendo referências aos campos de entrada
+            var hostInput = document.getElementById("host");
+            var placaInput = document.getElementById("placa");
+            var latenciaInput = document.getElementById("latencia");
+            var enviarButton = document.getElementById("button");
+            var portInput = document.getElementById("port");  // Adicionado esta linha
+
+            // Desabilitar campos se a ação for "Ouvir" (valor 0)
+            if (acao == "#") {
+                portInput.disabled = true;
+                hostInput.disabled = true;
+                placaInput.disabled = true;
+                latenciaInput.disabled = true;
+                enviarButton.disabled = true;
+            } else if (acao == 0) {
+                portInput.disabled = false;
+                hostInput.disabled = true;
+                placaInput.disabled = true;
+                latenciaInput.disabled = true;
+                enviarButton.disabled = false;
+            } else {
+                // Caso contrário, habilitar os campos
+                portInput.disabled = false;
+                hostInput.disabled = false;
+                placaInput.disabled = false;
+                latenciaInput.disabled = false;
+                enviarButton.disabled = false;
+            }
+        }
+    function capturarInputs() {
+        var acao = document.getElementById("acao").value;
+        var port = document.getElementById("port").value;
+        var host = document.getElementById("host").value;
+        var placa = document.getElementById("placa").value;
+        var latencia = document.getElementById("latencia").value;
+
+        // Concatenar os valores em uma string
+        let ouvir
+        if (acao == 1) {
+            ouvir = 'tx'
+            var resultado = 'sudo sh -c "' + ouvir + ' -b ' + latencia + ' -p ' + port + ' -h ' + host + ' -d hw:' + placa + ' >> testeTx.sh"';
+            fetch(`http://localhost:3000/run-log/${resultado}`)
+            .then(response => response.text())
+            .then(message => console.log(message))
+            .catch(error => console.error(error));
+        } else {
+            ouvir = 'rx'
+            var resultado = 'sudo sh -c "' + ouvir + ' -p ' + port + ' >> testeRx.sh"';
+            fetch(`http://localhost:3000/run-log/${resultado}`)
+            .then(response => response.text())
+            .then(message => console.log(message))
+            .catch(error => console.error(error));
+
+        }
+        console.log(acao, ouvir)
+        var resultado = "echo " +  ouvir + " -b " + latencia + " -p " + port + " -h " + host + " -d hw:" + placa ;
+        // Fazer uma solicitação para o servidor Node.js executar o log
+        window.location.href = "http://localhost:3000/transmission";
+            }
+</script>
+
+</html>
